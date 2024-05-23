@@ -7,51 +7,42 @@
 
 import SwiftUI
 
+let goldColor = Color(.gold)
+let silverColor = Color(.silver)
+
 struct ContentView: View {
-    let colors: [Color] = [.red, .green, .blue, .orange, .purple, .yellow]
-      @State private var selectedColor = Color.red
-      @State private var showColorPicker = false
+    let colors: [Color] = [.black, .brown, .red, .orange, .yellow, .green, .blue, .purple, .gray, .white]
+    let toleranceColors: [Color] = [goldColor, silverColor]
+    @State private var firstBandColor = Color.red
+    @State private var secondBandColor = Color.red
+    @State private var thirdBandColor = Color.brown
+    @State private var toleranceBandColor = goldColor
     
     var body: some View {
-      VStack {
-        ColorPickerView(colors: colors, selectedColor: $selectedColor, showPicker: $showColorPicker)
-      }
-    }
-}
-
-struct ColorPickerView: View {
-  let colors: [Color]
-  @Binding var selectedColor: Color
-  @Binding var showPicker: Bool
-
-  var body: some View {
-    ZStack {
-      Rectangle()
-        .foregroundColor(selectedColor)
-        .frame(width: 30, height: 100)
-        .onTapGesture {
-            withAnimation(.spring(duration: 1, bounce: 0.5)) {
-                showPicker.toggle()
+        ZStack {
+            Image("ResistorBase")
+                .resizable()
+                .scaledToFit()
+            HStack {
+                ColorPickerView(
+                    colors: colors,
+                    selectedColor: $firstBandColor
+                )
+                ColorPickerView(
+                    colors: colors,
+                    selectedColor: $secondBandColor
+                )
+                ColorPickerView(
+                    colors: colors,
+                    selectedColor: $thirdBandColor
+                )
+                ColorPickerView(
+                    colors: toleranceColors,
+                    selectedColor: $toleranceBandColor
+                )
             }
         }
-      if showPicker {
-        LazyVStack() {
-          ForEach(colors, id: \.self) { color in
-            Rectangle()
-              .foregroundColor(color)
-              .frame(width: 40, height: 40)
-              .onTapGesture {
-                  withAnimation() {
-                      selectedColor = color
-                      showPicker.toggle()
-                  }
-              }
-          }
-        }
-        .transition(.scale)
-      }
     }
-  }
 }
 
 #Preview {
