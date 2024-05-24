@@ -16,32 +16,50 @@ struct ContentView: View {
     @State private var firstBandColor = Color.red
     @State private var secondBandColor = Color.red
     @State private var thirdBandColor = Color.brown
-    @State private var toleranceBandColor = goldColor
+    @State private var toleranceBandColor = silverColor
     
     var body: some View {
         ZStack {
-            Image("ResistorBase")
-                .resizable()
-                .scaledToFit()
-            HStack {
-                ColorPickerView(
-                    colors: colors,
-                    selectedColor: $firstBandColor
-                )
-                ColorPickerView(
-                    colors: colors,
-                    selectedColor: $secondBandColor
-                )
-                ColorPickerView(
-                    colors: colors,
-                    selectedColor: $thirdBandColor
-                )
-                ColorPickerView(
-                    colors: toleranceColors,
-                    selectedColor: $toleranceBandColor
-                )
+            LinearGradient(
+                gradient: Gradient(colors: [.blue, .white]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack {
+                ZStack {
+                    Image("ResistorBase2")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                    HStack {
+                        ColorPickerView(
+                            colors: colors,
+                            selectedColor: $firstBandColor
+                        )
+                        ColorPickerView(
+                            colors: colors,
+                            selectedColor: $secondBandColor
+                        )
+                        ColorPickerView(
+                            colors: colors,
+                            selectedColor: $thirdBandColor
+                        )
+                        .padding(.trailing, 20)
+                        ColorPickerView(
+                            colors: toleranceColors,
+                            selectedColor: $toleranceBandColor
+                        )
+                    }
+                }
+                Text("150 kΩ")
+                    .font(.title2)
+                    .bold()
+                Text("5% Tolerance")
             }
         }
+        .ignoresSafeArea()
     }
 }
 
