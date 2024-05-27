@@ -7,16 +7,14 @@
 
 import SwiftUI
 
-let goldColor = Color(.gold)
-let silverColor = Color(.silver)
-
 struct ContentView: View {
-    let colors: [Color] = [.black, .brown, .red, .orange, .yellow, .green, .blue, .purple, .gray, .white]
-    let toleranceColors: [Color] = [goldColor, silverColor]
-    @State private var firstBandColor = Color.red
-    @State private var secondBandColor = Color.red
-    @State private var thirdBandColor = Color.brown
-    @State private var toleranceBandColor = silverColor
+    @State private var resistance = Resistance()
+    
+    @State var screenSize: CGRect = UIScreen.main.bounds
+    @State var orientation = UIDevice.current.orientation
+    
+    let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)            .makeConnectable()
+        .autoconnect()
     
     var body: some View {
         ZStack {
@@ -29,35 +27,52 @@ struct ContentView: View {
             
             VStack {
                 ZStack {
-                    Image("ResistorBase2")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
+                    VStack {
+                        Image("ResistorBase")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
+                    }
                     HStack {
                         ColorPickerView(
-                            colors: colors,
-                            selectedColor: $firstBandColor
+                            colors: resistance.colors,
+                            selectedColor: $resistance.firstBandColor,
+                            screenSize: $screenSize,
+                            orientation: $orientation
                         )
+                        .padding(.trailing, screenSize.width / colorStripSeparation)
                         ColorPickerView(
-                            colors: colors,
-                            selectedColor: $secondBandColor
+                            colors: resistance.colors,
+                            selectedColor: $resistance.secondBandColor,
+                            screenSize: $screenSize,
+                            orientation: $orientation
                         )
+                        .padding(.trailing, screenSize.width / colorStripSeparation)
                         ColorPickerView(
-                            colors: colors,
-                            selectedColor: $thirdBandColor
+                            colors: resistance.colors,
+                            selectedColor: $resistance.thirdBandColor,
+                            screenSize: $screenSize,
+                            orientation: $orientation
                         )
-                        .padding(.trailing, 20)
+                        .padding(.trailing, screenSize.width / toleranceStripSeparation)
                         ColorPickerView(
-                            colors: toleranceColors,
-                            selectedColor: $toleranceBandColor
+                            colors: resistance.toleranceColors,
+                            selectedColor: $resistance.toleranceBandColor,
+                            screenSize: $screenSize,
+                            orientation: $orientation
                         )
                     }
                 }
-                Text("150 kΩ")
+                Text(resistance.value)
                     .font(.title2)
                     .bold()
-                Text("5% Tolerance")
+                Text(resistance.tolerance)
             }
+        }
+        .onReceive(orientationChanged) { _ in
+            orientation = UIDevice.current.orientation
+        }.onChange(of: orientation) {
+            screenSize = UIScreen.main.bounds
         }
         .ignoresSafeArea()
     }

@@ -11,24 +11,33 @@ struct ColorPickerView: View {
     let colors: [Color]
     @Binding var selectedColor: Color
     @State var showPicker: Bool = false
-    let screenSize: CGRect = UIScreen.main.bounds
+    @Binding var screenSize: CGRect
+    @Binding var orientation: UIDeviceOrientation
     
     var body: some View {
         ZStack {
             Rectangle()
                 .foregroundColor(selectedColor)
-                .frame(width: screenSize.width / 12, height: screenSize.height / 11)
+                .frame(width: screenSize.width / stripWidth, height: screenSize.width / stripHeight)
                 .onTapGesture {
-                    withAnimation(.spring(duration: 1, bounce: 0.5)) {
+                    withAnimation(.spring(duration: springDuration, bounce: springBounces)) {
                         showPicker.toggle()
                     }
                 }
             if showPicker {
-                LazyVStack() {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 30))])  {
                     ForEach(colors, id: \.self) { color in
                         Rectangle()
                             .foregroundColor(color)
-                            .frame(width: 40, height: 40)
+                            .frame(
+                                width: screenSize.height < screenSize.width ?
+                                    screenSize.height / colorCellWidth :
+                                    screenSize.width / colorCellWidth,
+                                height: screenSize.height < screenSize.width ?
+                                    screenSize.height / colorCellHeight :
+                                    screenSize.width / colorCellHeight
+                            )
+                            .border(.white, width: borderWidth)
                             .onTapGesture {
                                 withAnimation() {
                                     selectedColor = color
@@ -37,7 +46,7 @@ struct ColorPickerView: View {
                             }
                     }
                 }
-                .frame(width: 40)
+                .frame(maxWidth: screenSize.width / 10)
                 .transition(.scale)
             }
         }
@@ -47,6 +56,8 @@ struct ColorPickerView: View {
 #Preview {
     ColorPickerView(
         colors: [.red, .blue, .orange],
-        selectedColor: .constant(.red)
+        selectedColor: .constant(.red),
+        screenSize: .constant(CGRect(x: 0, y: 0, width: 100, height: 100)),
+        orientation: .constant(UIDeviceOrientation(rawValue: 1)!)
     )
 }
