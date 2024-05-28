@@ -12,7 +12,6 @@ struct ColorPickerView: View {
     @Binding var selectedColor: Color
     @State var showPicker: Bool = false
     @Binding var screenSize: CGRect
-    @Binding var orientation: UIDeviceOrientation
     
     var body: some View {
         ZStack {
@@ -25,7 +24,7 @@ struct ColorPickerView: View {
                     }
                 }
             if showPicker {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 30))])  {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: screenSize.height / gridMinimumWidth))])  {
                     ForEach(colors, id: \.self) { color in
                         Rectangle()
                             .foregroundColor(color)
@@ -57,7 +56,6 @@ struct ColorPickerView: View {
     ColorPickerView(
         colors: [.red, .blue, .orange],
         selectedColor: .constant(.red),
-        screenSize: .constant(CGRect(x: 0, y: 0, width: 100, height: 100)),
-        orientation: .constant(UIDeviceOrientation(rawValue: 1)!)
+        screenSize: .constant(CGRect(x: 0, y: 0, width: 100, height: 100))
     )
 }
